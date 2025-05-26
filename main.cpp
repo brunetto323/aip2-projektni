@@ -31,7 +31,7 @@ const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22,
 
 int zavrtiRulet()
 {
-    return rand() % 37; // 0-36
+    return rand() % 37; 
 }
 
 void prikazRuleta(int broj, int polje[VELICINA][VELICINA])
@@ -212,46 +212,33 @@ void provjeriOklade(Igrac *igrac, int rezultat)
 void spremiIgrace(const Igrac igraci[], int brojIgraca, const char *filename)
 {
     ofstream f(filename);
-    if (!f)
-    {
+    if(!f){
         cout << "Ne mogu otvoriti datoteku za spremanje.\n";
         return;
     }
-    for (int i = 0; i < brojIgraca; i++)
-    {
-        f << igraci[i].ime << " " << igraci[i].novac << "\n";
-    }
-    f.close();
-}
-
-for (int i = 0; i < brojIgraca; i++)
-{
-    f << igraci[i].ime << " " << igraci[i].novac << "\n";
+    for (int i = 0;i<brojigraca;i++){
+        f << igraci[i].novac << " " << igraci[i].ime << "\n";
 }
 f.close();
+}
 
-void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char *filename)
-{
+void ucitanjeIgrace(igrac igraci[], int &brojIgraca, const char* filename) {
     ifstream f(filename);
-    if (!f)
-    {
-        cout << "Ne mogu otvoriti datoteku za učitavanje.\n";
+    if(!f){
+        cout<< "Ne mogu otvoriti datoteku za ucitavanje.\n";
         return;
     }
-    brojIgraca = 0;
-    while (f >> igraci[brojIgraca].ime >> igraci[brojIgraca].novac)
-        ;
-    {
-        igraci[brojIgraca].tipOklade = 1;
-        igraci[brojIgraca].brojOklade = 1;
-        igraci[brojIgraca].iznosOklade = 1;
-        brojIgraca++;
-        if (brojIgraca >= MAX_IGRACA)
-            break;
+    brojIGraca = 0;
+    while(f>>igraci[brojIgraca].ime >> igraci[brojigraca].novac){
+        igraci[brojIgraca].tipOklade = 0;
+        igraci[brojIgraca].brojOklada = 0;
+        igraci[brojIgraca].iznosOklade = 0;
+        brojigraca++;
+        if (brojigraca >=MAX_IGRACA) break;
+
     }
     f.close();
 }
-
 int main()
 {
     srand(time(nullptr));
