@@ -209,35 +209,36 @@ void provjeriOklade(Igrac *igrac, int rezultat)
     }
 }
 
-void spremiIgrace(const Igrac igraci[], int brojIgraca, const char *filename)
+void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
 {
+    for (int i = 0; i < brojIgraca - 1;i++){
+        for (int j = i + 1; j < brojIgraca;j++){
+            if(igraci[i].novac < igraci[j].novac){
+                Igrac temp = igraci[i];
+                igraci[i] = igraci[j];
+                igraci[j] = temp;
+            }
+        }
+    }
     ofstream f(filename);
-    if(!f){
-        cout << "Krivo\n";
+    if(!f)
+    {
+        cout << "Greška pri spremanju\n";
         return;
     }
-    for (int i = 0;i<brojIgraca;i++){
-        f << igraci[i].novac << " " << igraci[i].ime << "\n";
-}
-f.close();
-}
-
-void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char* filename) {
-    ifstream f(filename);
-    if(!f){
-        cout<< "Krivo\n";
-        return;
-    }
-    brojIgraca = 0;
-    while(f>>igraci[brojIgraca].ime >> igraci[brojIgraca].novac){
-        igraci[brojIgraca].tipOklade = 0;
-        igraci[brojIgraca].brojOklade = 0;
-        igraci[brojIgraca].iznosOklade = 0;
-        brojIgraca++;
-        if (brojIgraca >=MAX_IGRACA) break;
-
+    f << "Leaderboard:\n";
+    for (int i = 0; i < brojIgraca; i++)
+    {
+        f << i + 1 << ". " << igraci[i].ime << " - " << igraci[i].novac << "novca\n";
     }
     f.close();
+
+    cout << "\n===LEADERBOARD===\n";
+    for (int i = 0; i < brojIgraca;i++)
+    {
+        cout << i + 1 << ". " << igraci[i].ime << " -" << igraci[i].novac << " novca\n";
+    }
+    cout <<"======\n";
 }
 int main()
 {
@@ -253,7 +254,12 @@ int main()
     {
         brojIgraca = MAX_IGRACA;
     }
-    
+    else if (brojIgraca < 1)
+    {
+        cout << "Krivi unos";
+        return 1;
+    }
+
     for (int i = 0; i < brojIgraca; i++)
     {
         cout << "Unesite ime igraca " << i + 1 << ": ";
@@ -300,12 +306,12 @@ int main()
         cin >> odgovor;
         if (odgovor != 'd' && odgovor != 'D')
         {
-            spremiIgrace(igraci, brojIgraca, "igraci.txt");
+            spremiLeaderboard(igraci, brojIgraca, "leaderboard.txt");
             break;
         }
     }
-
+    
     cout << "Hvala na igranju!\n";
 
     return 0;
-};
+}
