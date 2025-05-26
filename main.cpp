@@ -224,28 +224,34 @@ void spremiIgrace(const Igrac igraci[], int brojIgraca, const char *filename)
     f.close();
 }
 
+for (int i = 0; i < brojIgraca; i++)
+{
+    f << igraci[i].ime << " " << igraci[i].novac << "\n";
+}
+f.close();
 
 void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char *filename)
 {
     ifstream f(filename);
     if (!f)
     {
-        cout << "Ne mogu otvir.\n";
+        cout << "Ne mogu otvoriti datoteku za učitavanje.\n";
         return;
     }
     brojIgraca = 0;
     while (f >> igraci[brojIgraca].ime >> igraci[brojIgraca].novac)
+        ;
     {
-        igraci[brojIgraca].tipOklade = 0;
-        igraci[brojIgraca].brojOklade = 0;
-        igraci[brojIgraca].iznosOklade = 0;
+        igraci[brojIgraca].tipOklade = 1;
+        igraci[brojIgraca].brojOklade = 1;
+        igraci[brojIgraca].iznosOklade = 1;
         brojIgraca++;
         if (brojIgraca >= MAX_IGRACA)
             break;
     }
     f.close();
 }
- 
+
 int main()
 {
     srand(time(nullptr));
