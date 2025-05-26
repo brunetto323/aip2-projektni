@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
 #include <cstring>
 #include <ctime>
 #include <fstream>
@@ -43,6 +42,7 @@ void prikazRuleta(int broj, int polje[VELICINA][VELICINA])
         "31", "32", "33", "34", "35", "36"};
 
     system("clear");
+
     cout << "\nRulet je pao na broj: [" << kotac[broj] << "]\n";
     polje[VELICINA / 2][VELICINA / 2] = broj;
 
@@ -213,28 +213,28 @@ void spremiIgrace(const Igrac igraci[], int brojIgraca, const char *filename)
 {
     ofstream f(filename);
     if(!f){
-        cout << "Ne mogu otvoriti datoteku za spremanje.\n";
+        cout << "Krivo\n";
         return;
     }
-    for (int i = 0;i<brojigraca;i++){
+    for (int i = 0;i<brojIgraca;i++){
         f << igraci[i].novac << " " << igraci[i].ime << "\n";
 }
 f.close();
 }
 
-void ucitanjeIgrace(igrac igraci[], int &brojIgraca, const char* filename) {
+void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char* filename) {
     ifstream f(filename);
     if(!f){
-        cout<< "Ne mogu otvoriti datoteku za ucitavanje.\n";
+        cout<< "Krivo\n";
         return;
     }
-    brojIGraca = 0;
-    while(f>>igraci[brojIgraca].ime >> igraci[brojigraca].novac){
+    brojIgraca = 0;
+    while(f>>igraci[brojIgraca].ime >> igraci[brojIgraca].novac){
         igraci[brojIgraca].tipOklade = 0;
-        igraci[brojIgraca].brojOklada = 0;
+        igraci[brojIgraca].brojOklade = 0;
         igraci[brojIgraca].iznosOklade = 0;
-        brojigraca++;
-        if (brojigraca >=MAX_IGRACA) break;
+        brojIgraca++;
+        if (brojIgraca >=MAX_IGRACA) break;
 
     }
     f.close();
@@ -250,8 +250,10 @@ int main()
     cout << "Unesite broj igraca (max " << MAX_IGRACA << "): ";
     cin >> brojIgraca;
     if (brojIgraca > MAX_IGRACA)
+    {
         brojIgraca = MAX_IGRACA;
-
+    }
+    
     for (int i = 0; i < brojIgraca; i++)
     {
         cout << "Unesite ime igraca " << i + 1 << ": ";
@@ -303,17 +305,7 @@ int main()
         }
     }
 
-    cout << "Hvala na igri!\n";
+    cout << "Hvala na igranju!\n";
 
     return 0;
-
 };
-timer_settime
-timer_settime
-timer_settime
-timer_settime
- 
-timer_settime
-timer_settime
-
-twsts
