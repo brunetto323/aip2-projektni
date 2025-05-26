@@ -208,7 +208,7 @@ void provjeriOklade(Igrac *igrac, int rezultat)
         cout << igrac->ime << ", nažalost niste pogodili. Izgubili ste " << igrac->iznosOklade << ".\n";
     }
 }
-////
+
 void spremiIgrace(const Igrac igraci[], int brojIgraca, const char *filename)
 {
     ofstream f(filename);
@@ -230,7 +230,7 @@ void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char *filename)
     ifstream f(filename);
     if (!f)
     {
-        cout << "Ne mogu otvoriti datoteku za učitavanje.\n";
+        cout << "Ne mogu otvir.\n";
         return;
     }
     brojIgraca = 0;
@@ -245,7 +245,7 @@ void ucitajIgrace(Igrac igraci[], int &brojIgraca, const char *filename)
     }
     f.close();
 }
-//
+ 
 int main()
 {
     srand(time(nullptr));
