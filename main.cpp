@@ -25,6 +25,12 @@ struct Igrac
     float iznosOklade;
 };
 
+struct Runda 
+{
+    int brojRuleta;
+    time_t vrijeme;
+};
+
 const int Crveni_brojevi[VELICINA_CRVENI] = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
 const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
@@ -43,6 +49,9 @@ void prikazRuleta(int broj, int polje[VELICINA][VELICINA])
 
     system("clear");
 
+    bool jeCrveni(int broj);
+    bool jeCrni(int broj);
+
     cout << "\nRulet je pao na broj: [" << kotac[broj] << "]\n";
     polje[VELICINA / 2][VELICINA / 2] = broj;
 
@@ -50,7 +59,19 @@ void prikazRuleta(int broj, int polje[VELICINA][VELICINA])
     {
         for (int j = 0; j < VELICINA; j++)
         {
-            cout << polje[i][j] << " ";
+            int broj = polje[i][j];
+            if (jeCrveni(broj))
+            {
+                cout << "\033[31m " << broj << "\033[0m ";
+            }
+            else if(jeCrni(broj))
+            {
+                cout << "\033[30m " << broj << "\033[0m ";
+            }
+            else
+            {
+                cout << broj << " ";
+            }
         }
         cout << "\n";
     }
@@ -240,6 +261,41 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
     }
     cout <<"======================\n";
 }
+
+void spremiRundu(int broj)
+{
+    Runda r;
+    r.brojRuleta=broj;
+    r.vrijeme = time(nullptr);
+
+    FILE *f = fopen("runde.bin", "ab");
+    if ( f == nullptr)
+    {
+        cout << "Krivi unos.\n";
+        return;
+    }
+    fwrite(&r, sizeof(Runda), 1, f);
+    fclose(f);
+}
+
+void prikazPovijesti()
+{
+    FILE *f = fopen("runde.bin", "rb");
+    if(f == nullptr)
+        {
+            cout << "Krivi unos";
+            return;
+        }
+
+        Runda r;
+        int broj = 1;
+        cout << "\n=== POVIJEST VRTNI ===\n";
+        while(fread(&r, sizeof(Runda), 1, f))
+        {
+            cout << broj++ << ".Broj: " << r.brojRuleta << " | Vrijeme: " << ctime(&r.vrijeme);
+        }
+        fclose(f);
+}
 int main()
 {
     srand(time(nullptr));
@@ -294,6 +350,7 @@ int main()
         }
 
         int rezultat = zavrtiRulet();
+        spremiRundu(rezultat);
         prikazRuleta(rezultat, polje);
 
         for (int i = 0; i < brojIgraca; i++)
