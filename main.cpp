@@ -226,19 +226,19 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
         cout << "Greška pri spremanju\n";
         return;
     }
-    f << "Leaderboard:\n";
+    f << "   ====LEADERBOARD====\n";
     for (int i = 0; i < brojIgraca; i++)
     {
         f << i + 1 << ". " << igraci[i].ime << " - " << igraci[i].novac << "novca\n";
     }
     f.close();
 
-    cout << "\n===LEADERBOARD===\n";
+    cout << "\n  ====LEADERBOARD====\n";
     for (int i = 0; i < brojIgraca;i++)
     {
         cout << i + 1 << ". " << igraci[i].ime << " -" << igraci[i].novac << " novca\n";
     }
-    cout <<"======\n";
+    cout <<"======================\n";
 }
 int main()
 {
