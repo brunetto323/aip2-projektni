@@ -31,6 +31,14 @@ struct Runda
     time_t vrijeme;
 };
 
+struct Pobjednik
+{
+    char ime[MAX_IME];
+    int pogodak;
+};
+
+ 
+
 const int Crveni_brojevi[VELICINA_CRVENI] = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
 const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
@@ -110,13 +118,13 @@ void prikazNaslov()
     cout << "\033[0m";
 }
 
-void postaviOklade(Igrac *igrac)
+void postaviOklade(Igrac &igrac)
 {
     int unosIzbora = 0;
 
     do
     {
-        cout << "Igrač " << igrac->ime << ", odaberite tip oklade:\n";
+        cout << "Igrač " << igrac.ime << ", odaberite tip oklade:\n";
         cout << "1. Pojedinačni broj (0-36)\n";
         cout << "2. Parni brojevi\n";
         cout << "3. Neparni brojevi\n";
@@ -131,28 +139,28 @@ void postaviOklade(Igrac *igrac)
         }
     } while (unosIzbora < 1 || unosIzbora > 5);
 
-    igrac->tipOklade = unosIzbora;
+    igrac.tipOklade = unosIzbora;
 
-    if (igrac->tipOklade == 1)
+    if (igrac.tipOklade == 1)
     {
         cout << "Unesite broj na koji želite da se kladite (0-36): ";
-        cin >> igrac->brojOklade;
-        while (igrac->brojOklade < 0 || igrac->brojOklade > 36)
+        cin >> igrac.brojOklade;
+        while (igrac.brojOklade < 0 || igrac.brojOklade > 36)
         {
             cout << "Nevažeći broj! Molimo unesite broj između 0 i 36: ";
-            cin >> igrac->brojOklade;
+            cin >> igrac.brojOklade;
         }
     }
 
     cout << "Unesite iznos novca koji želite da uložite: ";
-    cin >> igrac->iznosOklade;
-    while (igrac->iznosOklade > igrac->novac || igrac->iznosOklade <= 0)
+    cin >> igrac.iznosOklade;
+    while (igrac.iznosOklade > igrac.novac || igrac.iznosOklade <= 0)
     {
-        if (igrac->iznosOklade <= 0)
+        if (igrac.iznosOklade <= 0)
             cout << "Iznos mora biti pozitivan. Pokušajte ponovo: ";
         else
             cout << "Nemate dovoljno novca! Pokušajte s manjim iznosom: ";
-        cin >> igrac->iznosOklade;
+        cin >> igrac.iznosOklade;
     }
 }
 
@@ -176,57 +184,60 @@ bool jeCrni(int broj)
     return false;
 }
 
-void provjeriOklade(Igrac *igrac, int rezultat)
+void provjeriOklade(Igrac &igrac, int rezultat)
 {
     bool pogodak = false;
 
-    switch (igrac->tipOklade)
+    switch (igrac.tipOklade)
     {
     case 1: 
-        if (igrac->brojOklade == rezultat)
+        if (igrac.brojOklade == rezultat)
         {
-            igrac->novac += igrac->iznosOklade * 36;
+            igrac.novac += igrac.iznosOklade * 36;
             pogodak = true;
-            cout << "Čestitamo " << igrac->ime << "! Pogodili ste broj " << rezultat << "!\n";
+
+            spremiPobjednika("runde.bin", igrac.ime, rezultat);
+
+            cout << "Čestitamo " << igrac.ime << "! Pogodili ste broj " << rezultat << "!\n";
         }
         break;
     case 2: 
         if (rezultat != 0 && rezultat % 2 == 0)
         {
-            igrac->novac += igrac->iznosOklade * 1;
+            igrac.novac += igrac.iznosOklade * 1;
             pogodak = true;
-            cout << "Čestitamo " << igrac->ime << "! Pogodili ste parni broj " << rezultat << "!\n";
+            cout << "Čestitamo " << igrac.ime << "! Pogodili ste parni broj " << rezultat << "!\n";
         }
         break;
     case 3: 
         if (rezultat % 2 == 1)
         {
-            igrac->novac += igrac->iznosOklade * 1;
+            igrac.novac += igrac.iznosOklade * 1;
             pogodak = true;
-            cout << "Čestitamo " << igrac->ime << "! Pogodili ste neparni broj " << rezultat << "!\n";
+            cout << "Čestitamo " << igrac.ime << "! Pogodili ste neparni broj " << rezultat << "!\n";
         }
         break;
     case 4: 
         if (jeCrveni(rezultat))
         {
-            igrac->novac += igrac->iznosOklade * 1;
+            igrac.novac += igrac.iznosOklade * 1;
             pogodak = true;
-            cout << "Čestitamo " << igrac->ime << "! Pogodili ste crveni broj " << rezultat << "!\n";
+            cout << "Čestitamo " << igrac.ime << "! Pogodili ste crveni broj " << rezultat << "!\n";
         }
         break;
     case 5: 
         if (jeCrni(rezultat))
         {
-            igrac->novac += igrac->iznosOklade * 1;
+            igrac.novac += igrac.iznosOklade * 1;
             pogodak = true;
-            cout << "Čestitamo " << igrac->ime << "! Pogodili ste crni broj " << rezultat << "!\n";
+            cout << "Čestitamo " << igrac.ime << "! Pogodili ste crni broj " << rezultat << "!\n";
         }
         break;
     }
     if (!pogodak)
     {
-        igrac->novac -= igrac->iznosOklade;
-        cout << igrac->ime << ", nažalost niste pogodili. Izgubili ste " << igrac->iznosOklade << ".\n";
+        igrac.novac -= igrac.iznosOklade;
+        cout << igrac.ime << ", nažalost niste pogodili. Izgubili ste " << igrac.iznosOklade << ".\n";
     }
 }
 
@@ -244,7 +255,7 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
     ofstream f(filename);
     if(!f)
     {
-        cout << "Greška pri spremanju\n";
+        cout << "Krivo\n";
         return;
     }
     f << "   ====LEADERBOARD====\n";
@@ -254,12 +265,22 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
     }
     f.close();
 
-    cout << "\n  ====LEADERBOARD====\n";
-    for (int i = 0; i < brojIgraca;i++)
+}
+void spremiPobjednika(const char* filename, const char *ime, int brojPogotka)
+{
+    Pobjednik p;
+    strncpy(p.ime, ime, MAX_IME);
+    p.ime[MAX_IME - 1] = '\0';
+    p.pogodak = brojPogotka;
+
+    FILE *f = fopen(filename, "ab");
+    if (f == nullptr)
     {
-        cout << i + 1 << ". " << igraci[i].ime << " -" << igraci[i].novac << " novca\n";
+        cout << "Krivo.\n";
+        return;
     }
-    cout <<"======================\n";
+    fwrite(&p, sizeof(Pobjednik), 1, f);
+    fclose(f);
 }
 
 void spremiRundu(int broj)
@@ -289,7 +310,7 @@ void prikazPovijesti()
 
         Runda r;
         int broj = 1;
-        cout << "\n=== POVIJEST VRTNI ===\n";
+        cout << "\n=== POVIJEST VRTNJI ===\n";
         while(fread(&r, sizeof(Runda), 1, f))
         {
             cout << broj++ << ".Broj: " << r.brojRuleta << " | Vrijeme: " << ctime(&r.vrijeme);
@@ -346,7 +367,7 @@ int main()
         for (int i = 0; i < brojIgraca; i++)
         {
             cout << "\nIgrac " << igraci[i].ime << ", imate " << igraci[i].novac << " novca.\n";
-            postaviOklade(&igraci[i]);
+            postaviOklade(igraci[i]);
         }
 
         int rezultat = zavrtiRulet();
@@ -355,7 +376,7 @@ int main()
 
         for (int i = 0; i < brojIgraca; i++)
         {
-            provjeriOklade(&igraci[i], rezultat);
+            provjeriOklade(igraci[i], rezultat);
         }
 
         cout << "\nŽelite li igrati ponovo? (d/n): ";
