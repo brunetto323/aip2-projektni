@@ -31,14 +31,7 @@ struct Runda
     time_t vrijeme;
 };
 
-struct Pobjednik
-{
-    char ime[MAX_IME];
-    int pogodak;
-};
-
  
-
 const int Crveni_brojevi[VELICINA_CRVENI] = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
 const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
@@ -184,6 +177,7 @@ bool jeCrni(int broj)
     return false;
 }
 
+
 void provjeriOklade(Igrac &igrac, int rezultat)
 {
     bool pogodak = false;
@@ -195,11 +189,8 @@ void provjeriOklade(Igrac &igrac, int rezultat)
         {
             igrac.novac += igrac.iznosOklade * 36;
             pogodak = true;
-
-            spremiPobjednika("runde.bin", igrac.ime, rezultat);
-
             cout << "Čestitamo " << igrac.ime << "! Pogodili ste broj " << rezultat << "!\n";
-        }
+                }
         break;
     case 2: 
         if (rezultat != 0 && rezultat % 2 == 0)
@@ -266,23 +257,8 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
     f.close();
 
 }
-void spremiPobjednika(const char* filename, const char *ime, int brojPogotka)
-{
-    Pobjednik p;
-    strncpy(p.ime, ime, MAX_IME);
-    p.ime[MAX_IME - 1] = '\0';
-    p.pogodak = brojPogotka;
-
-    FILE *f = fopen(filename, "ab");
-    if (f == nullptr)
-    {
-        cout << "Krivo.\n";
-        return;
-    }
-    fwrite(&p, sizeof(Pobjednik), 1, f);
-    fclose(f);
-}
-
+ 
+ 
 void spremiRundu(int broj)
 {
     Runda r;
