@@ -1,12 +1,11 @@
 #include <iostream>
 #include <cstdlib>
-#include <cstring>
+#include <cstring> 
 #include <ctime>
 #include <fstream>
-#include <string.h>
 #include <algorithm>
 #include <numeric>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -18,7 +17,7 @@ using namespace std;
 
 struct Igrac
 {
-    char ime[MAX_IME];
+    string ime;
     float novac;
     int tipOklade;
     int brojOklade;
@@ -303,20 +302,18 @@ int main()
 
     cout << "Unesite broj igraca (max " << MAX_IGRACA << "): ";
     cin >> brojIgraca;
-    if (brojIgraca > MAX_IGRACA)
+    if (brojIgraca < 1 || brojIgraca > MAX_IGRACA)
     {
-        brojIgraca = MAX_IGRACA;
-    }
-    else if (brojIgraca < 1)
-    {
-        cout << "Krivi unos";
+        cout << "Krivi unos.\n";
         return 1;
     }
 
+    cin.ignore();
+
     for (int i = 0; i < brojIgraca; i++)
     {
-        cout << "Unesite ime igraca " << i + 1 << ": ";
-        cin >> igraci[i].ime;
+        cout << "Unesite ime i prezime igraca " << i + 1 << ": ";
+        getline(cin, igraci[i].ime);
 
         float unosNovca;
         do
@@ -334,6 +331,8 @@ int main()
         igraci[i].tipOklade = 0;
         igraci[i].brojOklade = 0;
         igraci[i].iznosOklade = 0.0f;
+
+        cin.ignore();
     }
 
     int polje[VELICINA][VELICINA] = {{0}};
