@@ -30,7 +30,12 @@ struct Runda
     time_t vrijeme;
 };
 
- 
+struct Pobjednik
+{
+    char ime[MAX_IME];
+    int brojRunde;
+};
+
 const int Crveni_brojevi[VELICINA_CRVENI] = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
 const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
@@ -251,47 +256,83 @@ void spremiLeaderboard(Igrac igraci[], int brojIgraca, const char* filename)
     f << "   ====LEADERBOARD====\n";
     for (int i = 0; i < brojIgraca; i++)
     {
-        f << i + 1 << ". " << igraci[i].ime << " - " << igraci[i].novac << "novca\n";
+        f << i + 1 << ". " << igraci[i].ime << " - " << igraci[i].novac << " novca\n";
     }
     f.close();
 
 }
- 
- 
+
 void spremiRundu(int broj)
 {
     Runda r;
-    r.brojRuleta=broj;
+    r.brojRuleta = broj;
     r.vrijeme = time(nullptr);
 
     FILE *f = fopen("runde.bin", "ab");
-    if ( f == nullptr)
+    if (f == nullptr)
     {
         cout << "Krivi unos.\n";
         return;
     }
+    uint8_t tip = 1;
+    fwrite(&tip, sizeof(tip), 1, f);
     fwrite(&r, sizeof(Runda), 1, f);
+    fclose(f);
+}
+void spremiPobjednika(const char *ime, int brojRunde)
+{
+    Pobjednik p;
+    strncpy(p.ime, ime, MAX_IME);
+    p.ime[MAX_IME - 1] = '\0';
+    p.brojRunde = brojRunde;
+
+    FILE *f = fopen("runde.bin", "ab");
+    if (f == nullptr)
+    {
+        cout << "Greška kod spremanja pobjednika.\n";
+        return;
+    }
+    uint8_t tip = 2; 
+    fwrite(&tip, sizeof(tip), 1, f);
+    fwrite(&p, sizeof(Pobjednik), 1, f);
     fclose(f);
 }
 
 void prikazPovijesti()
 {
     FILE *f = fopen("runde.bin", "rb");
-    if(f == nullptr)
-        {
-            cout << "Krivi unos";
-            return;
-        }
+    if (f == nullptr)
+    {
+        cout << "Nema spremljenih podataka.\n";
+        return;
+    }
 
-        Runda r;
-        int broj = 1;
-        cout << "\n=== POVIJEST VRTNJI ===\n";
-        while(fread(&r, sizeof(Runda), 1, f))
+    cout << "Povijest rundi i pobjednika:\n";
+    uint8_t tip;
+    while (fread(&tip, sizeof(tip), 1, f) == 1)
+    {
+        if (tip == 1)
         {
-            cout << broj++ << ".Broj: " << r.brojRuleta << " | Vrijeme: " << ctime(&r.vrijeme);
+            Runda r;
+            fread(&r, sizeof(Runda), 1, f);
+            cout << "Runda: Broj ruleta = " << r.brojRuleta
+                 << ", Vrijeme: " << ctime(&r.vrijeme);
         }
-        fclose(f);
+        else if (tip == 2)
+        {
+            Pobjednik p;
+            fread(&p, sizeof(Pobjednik), 1, f);
+            cout << " Pobjednik runde " << p.brojRunde << ": " << p.ime << "\n";
+        }
+        else
+        {
+            cout << "Nepoznat tip zapisa u datoteci.\n";
+            break;
+        }
+    }
+    fclose(f);
 }
+
 int main()
 {
     srand(time(nullptr));
@@ -352,6 +393,34 @@ int main()
         for (int i = 0; i < brojIgraca; i++)
         {
             provjeriOklade(igraci[i], rezultat);
+        }
+
+        int noviBrojIgraca = 0;
+        Igrac preostali[MAX_IGRACA];
+
+        for (int i = 0; i < brojIgraca; i++)
+        {
+            if (igraci[i].novac > 0)
+            {
+                preostali[noviBrojIgraca++] = igraci[i];
+            }
+            else
+            {
+                cout << igraci[i].ime << " je ispao iz igre jer više nema novca.\n";
+            }
+        }
+
+        brojIgraca = noviBrojIgraca;
+        for (int i = 0; i < brojIgraca; i++)
+        {
+            igraci[i] = preostali[i];
+        }
+
+        if(brojIgraca == 0)
+        {
+            cout << "Svi igrači su ispali. Kraj igre.\n";
+            spremiLeaderboard(igraci, brojIgraca, "leaderboard.txt");
+            break;
         }
 
         cout << "\nŽelite li igrati ponovo? (d/n): ";
