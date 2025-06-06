@@ -36,6 +36,8 @@ struct Pobjednik
     int brojRunde;
 };
 
+void spremiPobjednika(const char *ime, int brojRunde);
+
 const int Crveni_brojevi[VELICINA_CRVENI] = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
 const int Crni_brojevi[VELICINA_CRNI] = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
@@ -181,11 +183,10 @@ bool jeCrni(int broj)
     return false;
 }
 
-
-void provjeriOklade(Igrac &igrac, int rezultat)
+void provjeriOklade(Igrac &igrac, int rezultat, int brojRunde)
 {
     bool pogodak = false;
-
+    void spremiPobjednika(const char *ime, int brojRunde);
     switch (igrac.tipOklade)
     {
     case 1: 
@@ -229,7 +230,11 @@ void provjeriOklade(Igrac &igrac, int rezultat)
         }
         break;
     }
-    if (!pogodak)
+    if (pogodak)
+    {
+        spremiPobjednika(igrac.ime.c_str(), brojRunde);
+    }
+    else
     {
         igrac.novac -= igrac.iznosOklade;
         cout << igrac.ime << ", nažalost niste pogodili. Izgubili ste " << igrac.iznosOklade << ".\n";
@@ -377,7 +382,7 @@ int main()
     }
 
     int polje[VELICINA][VELICINA] = {{0}};
-
+    int brojRunde = 1;
     while (true)
     {
         for (int i = 0; i < brojIgraca; i++)
@@ -392,8 +397,9 @@ int main()
 
         for (int i = 0; i < brojIgraca; i++)
         {
-            provjeriOklade(igraci[i], rezultat);
+            provjeriOklade(igraci[i], rezultat,brojRunde);
         }
+        brojRunde++;
 
         int noviBrojIgraca = 0;
         Igrac preostali[MAX_IGRACA];
